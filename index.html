@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://unpkg.com/vuex@3/dist/vuex.js"></script>
+    <title>
+      external order tst
+    </title>
+  </head>
+
+
+  <body>
+    <div class="container">
+      <div
+        id="item"
+        class="items"
+        style="background-color: red; border: 1px solid blue; border-radius: 8px; cursor: pointer; width: 200px; height: 250px;" 
+      >
+        nome do plano
+
+        R$ 69,90
+      </div>
+    </div>
+  </body>
+</html>
+
+<script src="https://beta.hubdevendas.com/external-order/external-order.umd.js?client-key=key-cabonnet"></script>
+
+<script>
+  const foo = document.getElementById("item");
+
+  foo.addEventListener("click", () => {
+    window.externalOrder.startOrderByPlan("mega")
+  })
+</script>
