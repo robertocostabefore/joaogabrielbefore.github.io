@@ -77,7 +77,6 @@
 <script>
   async function downloadFileAndSetInput(fileUrl) {
       try {
-        this.setLoading(true)
 
         const response = await fetch(fileUrl, {
           method: 'GET',
@@ -90,16 +89,12 @@
 
           const file = new File([blob], `${this.getTerm?.termName}.docx` || 'importacao.docx', { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
 
-          this.$refs?.fileUpload?.fileInput(file);
-
-          this.term.file = file;
+          console.log('deu: ', file)
         } else {
           console.error('Erro ao fazer o download do arquivo blob:', response.status);
         }
       } catch (error) {
         console.error('Erro ao baixar o arquivo pela url:', error);
-      } finally {
-        this.setLoading(false)
       }
     }
 
