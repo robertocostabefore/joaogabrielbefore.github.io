@@ -56,8 +56,10 @@
   </body>
 </html>
 
-<script src="https://beta.hubdevendas.com/external-order/external-order.umd.js?client-key=key-cabonnet&app-tenant-subdomain=cabonnet"></script>
+<!-- <script src="https://beta.hubdevendas.com/external-order/external-order.umd.js?client-key=key-cabonnet&app-tenant-subdomain=cabonnet"></script> -->
 
+
+<!-- 
 <script>
   const foos = document.querySelectorAll('.items')
 
@@ -69,4 +71,38 @@
     })
   })
 
+</script> -->
+
+
+<script>
+  async function downloadFileAndSetInput(fileUrl) {
+      try {
+        this.setLoading(true)
+
+        const response = await fetch(fileUrl, {
+          method: 'GET',
+          headers: {
+            "access-control-allow-origin": "*.",
+          },
+        });
+        if (response.ok) {
+          const blob = await response.blob();
+
+          const file = new File([blob], `${this.getTerm?.termName}.docx` || 'importacao.docx', { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+
+          this.$refs?.fileUpload?.fileInput(file);
+
+          this.term.file = file;
+        } else {
+          console.error('Erro ao fazer o download do arquivo blob:', response.status);
+        }
+      } catch (error) {
+        console.error('Erro ao baixar o arquivo pela url:', error);
+      } finally {
+        this.setLoading(false)
+      }
+    }
+
+    downloadFileAndSetInput('https://hubdevendas-beta-new.s3.amazonaws.com/biometry_terms/TESTE_ENUM_20251014_132024.docx?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIASC6G2IL6QCUYFBUM%2F20251014%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251014T155116Z&X-Amz-SignedHeaders=host&X-Amz-Expires=1200&X-Amz-Signature=840c0a69a362b05ad72abbfba01665e4c92cd3ecdb0f6f37091c14fffe4fadf6')
 </script>
+
