@@ -6,98 +6,164 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://unpkg.com/vuex@3/dist/vuex.js"></script>
-    
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' ;
-    img-src      'self' 'unsafe-inline' https://*.hubdevendas.com;
-    style-src     'self' 'unsafe-inline' https://fonts.googleapis.com;
-    script-src    'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com *.hubdevendas.com;
-    connect-src    'self'
-                   https://*.hubdevendas.com;
-    child-src 'self' https://*.hubdevendas.com;
-                     object-src 'self';">
 
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src  'self';
+        img-src      'self' 'unsafe-inline' https://*.hubdevendas.com;
+        style-src    'self' 'unsafe-inline' https://fonts.googleapis.com;
+        script-src   'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com *.hubdevendas.com;
+        connect-src  'self' https://*.hubdevendas.com;
+        child-src    'self' https://*.hubdevendas.com;
+        object-src   'self';
+      "
+    >
 
-    <title>
-      external order tst
-    </title>
+    <title>external order iframe</title>
   </head>
 
 
+
+
+
   <body>
-    <div class="container" style="display: flex;  gap: 20px; padding: 5rem;">
+    <div
+      class="container"
+      style="
+        display: flex;
+        gap: 20px;
+        padding: 5rem;
+      "
+    >
+      <h2>
+        Adotar filhotes de gatinhos
+      </h2>
+
       <div
         id="item"
         class="items"
-         style="background-color: blue; border: 1px solid red; border-radius: 8px; cursor: pointer; width: 200px; height: 250px; display: flex;flex-direction: column; gap: 1rem;align-items: center; justify-content: center;color: white; font-weight: bold;"  
       >
-        <span>plano 1</span>
-
+        <span class="name">Filhote de Sagrado da Birmânia</span>
         R$ 11,11
       </div>
+
       <div
-      id="item"
-      class="items"
-       style="background-color: blue; border: 1px solid red; border-radius: 8px; cursor: pointer; width: 200px; height: 250px; display: flex;flex-direction: column; gap: 1rem;align-items: center; justify-content: center;color: white; font-weight: bold;"  
-    >
-      <span>mega 100mb</span>
+        id="item"
+        class="items"
+      >
+        <span class="name">Filhote de Siamês</span>
+        R$ 206,65
+      </div>
 
-      R$ 00,90
+      <div
+        id="item"
+        class="items"
+      >
+        <span class="name">Filhote de Laranja</span>
+        R$ 35,15
+      </div>
     </div>
-    <div
-    id="item"
-    class="items"
-    style="background-color: blue; border: 1px solid red; border-radius: 8px; cursor: pointer; width: 200px; height: 250px; display: flex;flex-direction: column; gap: 1rem;align-items: center; justify-content: center;color: white; font-weight: bold;" 
-  >
-    <span>300 mega</span>
 
-    R$ 250,00
-  </div>
-    </div>
+    <iframe
+      id="iframe-hub-external-order"
+      src="http://beta.hubdevendas.com/external-order/index.html?client-key=key-mogi"
+      frameborder="0"
+    ></iframe>
   </body>
 </html>
 
-<!-- <script src="https://beta.hubdevendas.com/external-order/external-order.umd.js?client-key=key-cabonnet&app-tenant-subdomain=cabonnet"></script> -->
-
-
-<!-- 
 <script>
   const foos = document.querySelectorAll('.items')
+  const isExternalOrderReady = false
 
   foos.forEach(item => {
     item.addEventListener('click', () => {
-      const val = item.querySelector('span')
-      console.log('val: ', val.innerHTML)
-      window.externalOrder.startOrderByPlan(val.innerHTML)
+      if (!isExternalOrderReady) {
+        return
+      }
+
+      const iframe = document.getElementById("iframe-hub-external-order")
+      iframe.classList.add("visible")
+      iframe.contentWindow.postMessage({ action: 'startOrderByPlan', payload: { planName: val.innerHTML } }, "*")
     })
   })
 
-</script> -->
-
-
-<script>
-  async function downloadFileAndSetInput(fileUrl) {
-      try {
-
-        const response = await fetch(fileUrl, {
-          method: 'GET',
-          headers: {
-            "access-control-allow-origin": "*.",
-          },
-        });
-        if (response.ok) {
-          const blob = await response.blob();
-
-          const file = new File([blob], `${this.getTerm?.termName}.docx` || 'importacao.docx', { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-
-          console.log('deu: ', file)
-        } else {
-          console.error('Erro ao fazer o download do arquivo blob:', response.status);
-        }
-      } catch (error) {
-        console.error('Erro ao baixar o arquivo pela url:', error);
-      }
+  window.addEventListener('message', e => {
+    if (e.data.action === 'hideExternalOrder') {
+      const iframe = document.getElementById("iframe-hub-external-order")
+      iframe.classList.remove("visible")
     }
 
-    downloadFileAndSetInput('https://hubdevendas-beta-new.s3.amazonaws.com/biometry_terms/TESTE_ENUM_20251014_132024.docx?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIASC6G2IL6QCUYFBUM%2F20251014%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251014T155116Z&X-Amz-SignedHeaders=host&X-Amz-Expires=1200&X-Amz-Signature=840c0a69a362b05ad72abbfba01665e4c92cd3ecdb0f6f37091c14fffe4fadf6')
+    if (e.data.action === 'externalOrderReady') {
+      isExternalOrderReady = true
+    }
+  })
 </script>
 
+
+
+
+
+<style>
+.container {
+  max-width: 1043px;
+  justify-content: center;
+  margin: auto;
+  flex-wrap: wrap;
+}
+
+h2 {
+  width: 100%;
+  text-align: center;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.items {
+  background-color: gray;
+  border: 1px solid #424242;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 200px;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.items:hover {
+  background-color: #424242;
+  transform: scale(1.02);
+}
+
+.items .name {
+  text-align: center;
+}
+
+#iframe-hub-external-order {
+  transition: all 0s linear;
+  width: 0px;
+  height: 0px;
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  opacity: 0;
+  z-index: -1;
+}
+
+#iframe-hub-external-order.visible {
+  transition: all .4s ease, opacity .2s linear .2s;
+  width: 100dvw;
+  height: 100dvh;
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  opacity: 1;
+  z-index: 100000000;
+}
+</style>
